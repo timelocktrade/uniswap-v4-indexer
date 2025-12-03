@@ -1,149 +1,268 @@
-type Swap
-  @index(fields: ["timestamp", "pool"])
-  @index(fields: ["amountUSD", "pool"]) {
-  id: ID!
-  chainId: BigInt!
-  transaction: String! # Instead of Transaction reference
-  timestamp: BigInt! @index
-  pool: String! # Instead of Pool reference
-  token0: Token! # Changed from String to Token reference
-  token1: Token! # Changed from String to Token reference
-  sender: String! # Instead of Bytes
-  origin: String! # Instead of Bytes
-  amount0: BigDecimal!
-  amount1: BigDecimal!
-  amountUSD: BigDecimal!
-  sqrtPriceX96: BigInt!
-  tick: BigInt!
-  logIndex: BigInt!
-}
-
-type PoolManager {
-  id: ID!
-  chainId: BigInt!
-  poolCount: BigInt!
-  txCount: BigInt!
-  totalVolumeUSD: BigDecimal!
-  totalVolumeETH: BigDecimal!
-  totalFeesUSD: BigDecimal!
-  totalFeesETH: BigDecimal!
-  untrackedVolumeUSD: BigDecimal!
-  totalValueLockedUSD: BigDecimal!
-  totalValueLockedETH: BigDecimal!
-  totalValueLockedUSDUntracked: BigDecimal!
-  totalValueLockedETHUntracked: BigDecimal!
-  owner: String!
-  numberOfSwaps: BigInt! # total swaps on network
-  hookedPools: BigInt! # number of pools with hooks
-  hookedSwaps: BigInt! # number of swaps through hooked pools
-}
-
-type Pool {
-  id: ID!
-  chainId: BigInt!
-  name: String!
-  createdAtTimestamp: BigInt!
-  createdAtBlockNumber: BigInt!
-  token0: String! # Instead of Token reference
-  token1: String! # Instead of Token reference
-  feeTier: BigInt!
-  liquidity: BigInt!
-  sqrtPrice: BigInt!
-  token0Price: BigDecimal!
-  token1Price: BigDecimal!
-  tick: BigInt
-  tickSpacing: BigInt!
-  observationIndex: BigInt!
-  volumeToken0: BigDecimal!
-  volumeToken1: BigDecimal!
-  volumeUSD: BigDecimal! @index
-  untrackedVolumeUSD: BigDecimal!
-  feesUSD: BigDecimal!
-  feesUSDUntracked: BigDecimal!
-  txCount: BigInt! @index
-  collectedFeesToken0: BigDecimal!
-  collectedFeesToken1: BigDecimal!
-  collectedFeesUSD: BigDecimal!
-  totalValueLockedToken0: BigDecimal!
-  totalValueLockedToken1: BigDecimal!
-  totalValueLockedETH: BigDecimal!
-  totalValueLockedUSD: BigDecimal! @index
-  totalValueLockedUSDUntracked: BigDecimal!
-  liquidityProviderCount: BigInt!
-  hooks: String!
-  # derived fields
-  ticks: [Tick!]! @derivedFrom(field: "pool")
-}
-
-type Tick {
-  id: ID! # <pool address>#<tickIdx>
-  chainId: BigInt!
-  pool: Pool! # Pointer back to Pool
-  tickIdx: BigInt! @index
-  liquidityGross: BigInt! # abs liquidity at this boundary
-  liquidityNet: BigInt! # delta when price crosses boundary
-  price0: BigDecimal! # Optional – 1.0001^tickIdx
-  price1: BigDecimal! # Optional inverse price
-  createdAtTimestamp: BigInt!
-  createdAtBlockNumber: BigInt!
-}
-
 type Token {
-  id: ID!
+  id: ID! # chainId-token address
   chainId: BigInt!
   symbol: String!
   name: String!
   decimals: BigInt!
   totalSupply: BigInt!
-  volume: BigDecimal!
-  volumeUSD: BigDecimal!
-  untrackedVolumeUSD: BigDecimal!
-  feesUSD: BigDecimal!
+  volume: BigInt!
   txCount: BigInt!
-  poolCount: BigInt!
-  totalValueLocked: BigDecimal!
-  totalValueLockedUSD: BigDecimal!
-  totalValueLockedUSDUntracked: BigDecimal!
-  derivedETH: BigDecimal!
-  whitelistPools: [String!]! # Changed from Pool reference to String for simplicity
+  poolCount: BigInt! @index
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  positionCount: BigInt!
+  lpCount: BigInt!
+  tvl: BigInt!
+  whitelistPools: [String!]!
+  tokenDayData: [TokenDayData!]! @derivedFrom(field: "token")
+  tokenHourData: [TokenHourData!]! @derivedFrom(field: "token")
 }
 
-# stores for USD calculations
-type Bundle {
-  id: ID!
-  # price of ETH in usd
-  ethPriceUSD: BigDecimal!
-}
-
-type HookStats {
-  id: ID! # hook address
+type Pool {
+  id: ID! # chainId-poolId
   chainId: BigInt!
-  numberOfPools: BigInt!
-  numberOfSwaps: BigInt!
-  firstPoolCreatedAt: BigInt!
-  totalValueLockedUSD: BigDecimal! # Total TVL across all pools using this hook
-  totalVolumeUSD: BigDecimal! # Total volume across all pools using this hook
-  untrackedVolumeUSD: BigDecimal! # Untracked volume for non-whitelisted tokens
-  totalFeesUSD: BigDecimal! # Total fees across all pools using this hook
+  poolId: String!
+  name: String!
+  createdAtTimestamp: BigInt! @index
+  createdAtBlockNumber: BigInt! @index
+  token0: Token! @index
+  token1: Token! @index
+  feeTier: BigInt! @index
+  tickSpacing: BigInt!
+  hooks: String!
+  liquidity: BigInt!
+  sqrtPrice: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  observationIndex: BigInt!
+  feeGrowthGlobal0X128: BigInt!
+  feeGrowthGlobal1X128: BigInt!
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  tvl0: BigInt!
+  tvl1: BigInt!
+  txCount: BigInt! @index
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  positionCount: BigInt!
+  activePositionCount: BigInt!
+  lpCount: BigInt!
+  pool5MinuteData: [Pool5MinuteData!]! @derivedFrom(field: "pool")
+  poolHourData: [PoolHourData!]! @derivedFrom(field: "pool")
+  poolDayData: [PoolDayData!]! @derivedFrom(field: "pool")
+  modifyLiquidities: [ModifyLiquidity!]! @derivedFrom(field: "pool")
+  swaps: [Swap!]! @derivedFrom(field: "pool")
+  ticks: [Tick!]! @derivedFrom(field: "pool")
+  positions: [Position!]! @derivedFrom(field: "pool")
+}
+
+type Tick {
+  id: ID! # chainId-<poolId>#<tick index>
+  chainId: BigInt!
+  poolId: String @index
+  tickIdx: BigInt! @index
+  pool: Pool! @index
+  liquidityGross: BigInt!
+  liquidityNet: BigInt!
+  price0: BigInt!
+  price1: BigInt!
+  feeGrowthOutside0X128: BigInt!
+  feeGrowthOutside1X128: BigInt!
+  positionCount: BigInt!
+  createdAtTimestamp: BigInt! @index
+  createdAtBlockNumber: BigInt! @index
+}
+
+type LiquidityProvider {
+  id: ID! # chainId-<poolId>-<liquidity provider address>
+  chainId: BigInt!
+  address: String! @index
+  deposited0: BigInt!
+  deposited1: BigInt!
+  withdrawn0: BigInt!
+  withdrawn1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  positionCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  createdAtTimestamp: BigInt! @index
+  createdAtBlockNumber: BigInt! @index
+  positions: [Position!]! @derivedFrom(field: "liquidityProvider")
+}
+
+type Position {
+  id: ID! # chainId-<poolId>#<owner>#<tickLower>#<tickUpper>
+  chainId: BigInt!
+  owner: String! @index
+  liquidityProvider: LiquidityProvider! @index
+  pool: Pool! @index
+  token0: Token! @index
+  token1: Token! @index
+  tickLower: BigInt! @index
+  tickUpper: BigInt! @index
+  liquidity: BigInt!
+  deposited0: BigInt!
+  deposited1: BigInt!
+  withdrawn0: BigInt!
+  withdrawn1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  feeGrowthInside0LastX128: BigInt!
+  feeGrowthInside1LastX128: BigInt!
+  modifyLiquidityCount: BigInt!
+  transaction: Transaction!
+  createdAtTimestamp: BigInt! @index
+  createdAtBlockNumber: BigInt! @index
+}
+
+type Transaction {
+  id: ID! # chainId-txn hash
+  chainId: BigInt!
+  blockNumber: BigInt! @index
+  timestamp: BigInt! @index
+  gasUsed: BigInt!
+  gasPrice: BigInt!
+  modifyLiquidities: [ModifyLiquidity!]! @derivedFrom(field: "transaction")
+  swaps: [Swap!]! @derivedFrom(field: "transaction")
 }
 
 type ModifyLiquidity
   @index(fields: ["timestamp", "pool"])
-  @index(fields: ["amountUSD", "pool"]) {
-  id: ID!
+  @index(fields: ["amount", "pool"]) {
+  id: ID! # chainId-transaction hash + "#" + index in modifyLiquidity array
   chainId: BigInt!
-  transaction: String! # Instead of Transaction reference
+  transaction: Transaction!
   timestamp: BigInt! @index
-  pool: Pool! # Instead of Pool reference
-  token0: Token! # Token reference like in Swap entity
-  token1: Token! # Token reference like in Swap entity
-  sender: String! # Instead of Bytes
-  origin: String! # Instead of Bytes - the EOA that initiated the txn
-  amount: BigInt! # amount of liquidity modified
-  amount0: BigDecimal! # amount of token 0 modified
-  amount1: BigDecimal! # amount of token 1 modified
-  amountUSD: BigDecimal! @index # derived amount based on available prices of tokens
-  tickLower: BigInt! # lower tick of the position
-  tickUpper: BigInt! # upper tick of the position
-  logIndex: BigInt! # index within the txn
+  pool: Pool! @index
+  token0: Token! @index
+  token1: Token! @index
+  sender: String! @index
+  origin: String! @index
+  amount: BigInt! @index # amount of liquidity modified (can be positive or negative)
+  amount0: BigInt! # amount of token 0 modified
+  amount1: BigInt! # amount of token 1 modified
+  tickLower: BigInt! @index
+  tickUpper: BigInt! @index
+  logIndex: BigInt!
+}
+
+type Swap
+  @index(fields: ["timestamp", "pool"])
+  @index(fields: ["amount0", "pool"]) {
+  id: ID! # chainId-transaction hash + "#" + index in swaps array
+  chainId: BigInt!
+  transaction: Transaction!
+  timestamp: BigInt! @index
+  pool: Pool! @index
+  token0: Token! @index
+  token1: Token! @index
+  sender: String! @index
+  recipient: String! @index
+  origin: String! @index
+  amount0: BigInt!
+  amount1: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt! @index
+  logIndex: BigInt
+}
+
+type PoolDayData {
+  id: ID! # chainId-<poolId>-<timestamp rounded to current day by dividing by 86400>
+  chainId: BigInt!
+  startTimestamp: BigInt! @index
+  pool: Pool! @index
+  liquidity: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  txCount: BigInt!
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  open_: BigInt!
+  high: BigInt!
+  low: BigInt!
+  close: BigInt!
+}
+
+type Pool5MinuteData {
+  id: ID! # chainId-<poolId>-<timestamp rounded to nearest 5 minutes>
+  chainId: BigInt!
+  startTimestamp: BigInt! @index
+  pool: Pool! @index
+  liquidity: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  txCount: BigInt!
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  open_: BigInt!
+  high: BigInt!
+  low: BigInt!
+  close: BigInt!
+}
+
+type PoolHourData {
+  id: ID! # chainId-<poolId>-<timestamp rounded to current hour>
+  chainId: BigInt!
+  startTimestamp: BigInt! @index
+  pool: Pool! @index
+  liquidity: BigInt!
+  sqrtPriceX96: BigInt!
+  tick: BigInt!
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  txCount: BigInt!
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+  open_: BigInt!
+  high: BigInt!
+  low: BigInt!
+  close: BigInt!
+}
+
+type TokenDayData {
+  id: ID! # chainId-token address-date
+  chainId: BigInt!
+  startTimestamp: BigInt! @index
+  token: Token! @index
+  volume: BigInt!
+  txCount: BigInt!
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+}
+
+type TokenHourData {
+  id: ID! # chainId-token address-timestamp
+  chainId: BigInt!
+  startTimestamp: BigInt! @index
+  token: Token! @index
+  volume: BigInt!
+  txCount: BigInt!
+  swapCount: BigInt!
+  modifyLiquidityCount: BigInt!
+}
+
+type HookStats {
+  id: ID! # chainId-hook address
+  chainId: BigInt!
+  poolCount: BigInt!
+  swapCount: BigInt!
+  firstPoolCreatedAt: BigInt!
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  tvl0: BigInt!
+  tvl1: BigInt!
 }

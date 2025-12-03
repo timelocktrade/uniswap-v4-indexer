@@ -9,21 +9,28 @@
     "codegen": "envio codegen",
     "dev": "envio dev",
     "start": "envio start",
-    "test": "pnpm mocha"
+    "test": "pnpm mocha",
+    "lint": "gts lint",
+    "fix": "gts fix",
+    "posttest": "npm run lint"
   },
   "devDependencies": {
     "@types/chai": "^4.3.11",
     "@types/mocha": "10.0.6",
     "@types/node": "20.8.8",
+    "chai": "4.3.10",
+    "dotenv": "16.4.5",
+    "gts": "^6.0.2",
+    "mocha": "10.2.0",
     "ts-mocha": "^10.0.0",
     "typescript": "5.2.2",
-    "chai": "4.3.10",
-    "mocha": "10.2.0",
-    "dotenv": "16.4.5",
     "viem": "2.21.0"
   },
   "dependencies": {
-    "envio": "2.32.3"
+    "@uniswap/sdk-core": "^7.9.0",
+    "@uniswap/v3-sdk": "^3.26.0",
+    "envio": "2.32.3",
+    "jsbi": "3.2.5"
   },
   "optionalDependencies": {
     "generated": "./generated"
