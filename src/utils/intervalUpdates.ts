@@ -15,7 +15,7 @@ export const updatePoolDayData = async (
     : {
         id: dayPoolId,
         chainId: pool.chainId,
-        startTimestamp: BigInt(dayStartTimestamp),
+        startTimestamp: dayStartTimestamp,
         pool_id: pool.id,
         volume0: 0n,
         volume1: 0n,
@@ -68,7 +68,7 @@ export const updatePool5MinuteData = async (
     : {
         id: fiveMinutePoolId,
         chainId: pool.chainId,
-        startTimestamp: BigInt(fiveMinuteStartUnix),
+        startTimestamp: fiveMinuteStartUnix,
         pool_id: pool.id,
         volume0: 0n,
         volume1: 0n,
@@ -121,7 +121,7 @@ export const updatePoolHourData = async (
     : {
         id: hourPoolId,
         chainId: pool.chainId,
-        startTimestamp: BigInt(hourStartUnix),
+        startTimestamp: hourStartUnix,
         pool_id: pool.id,
         volume0: 0n,
         volume1: 0n,
@@ -174,7 +174,7 @@ export const updateTokenDayData = async (
     : {
         id: tokenDayId,
         chainId: token.chainId,
-        startTimestamp: BigInt(dayStartTimestamp),
+        startTimestamp: dayStartTimestamp,
         token_id: token.id,
         volume: 0n,
         txCount: 0n,
@@ -202,7 +202,7 @@ export const updateTokenHourData = async (
     : {
         id: tokenHourID,
         chainId: token.chainId,
-        startTimestamp: BigInt(hourStartTimestamp),
+        startTimestamp: hourStartTimestamp,
         token_id: token.id,
         volume: 0n,
         txCount: 0n,
