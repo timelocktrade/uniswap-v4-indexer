@@ -1,7 +1,6 @@
 import {createEffect, S} from 'envio';
-import {type Address, getContract, erc20Abi} from 'viem';
-import {getChain, getPublicClient} from '~/utils/rpc';
-import {ADDRESS_ZERO} from '~/utils/constants';
+import {type Address, getContract, erc20Abi, zeroAddress} from 'viem';
+import {getChain, getPublicClient} from '../utils/rpc';
 
 const getNativeTokenMetadata = (chainId: number) => {
   const chain = getChain(chainId);
@@ -32,7 +31,7 @@ export const getTokenMetadataEffect = createEffect(
     const {address, chainId} = input;
     const normalizedAddress = address.toLowerCase();
 
-    if (normalizedAddress === ADDRESS_ZERO.toLowerCase()) {
+    if (normalizedAddress === zeroAddress.toLowerCase()) {
       return getNativeTokenMetadata(chainId);
     }
     const client = getPublicClient(chainId);

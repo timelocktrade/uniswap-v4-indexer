@@ -15,24 +15,24 @@
     "posttest": "npm run lint"
   },
   "devDependencies": {
-    "@types/chai": "^4.3.11",
-    "@types/mocha": "10.0.6",
-    "@types/node": "20.8.8",
-    "chai": "4.3.10",
-    "dotenv": "16.4.5",
-    "gts": "^6.0.2",
-    "mocha": "10.2.0",
-    "ts-mocha": "^10.0.0",
-    "typescript": "5.2.2",
-    "viem": "2.21.0"
+    "@types/chai": "^5.2.3",
+    "@types/mocha": "10.0.10",
+    "@types/node": "25.0.3",
+    "chai": "6.2.2",
+    "dotenv": "17.2.3",
+    "gts": "^7.0.0",
+    "mocha": "11.7.5",
+    "ts-mocha": "^11.1.0",
+    "typescript": "5.9.3",
+    "viem": "2.43.3"
   },
   "dependencies": {
-    "@uniswap/sdk-core": "^7.9.0",
-    "@uniswap/v3-sdk": "^3.26.0",
+    "@uniswap/sdk-core": "^7.10.0",
+    "@uniswap/v3-sdk": "^3.27.0",
     "envio": "2.32.3",
     "jsbi": "3.2.5"
   },
   "optionalDependencies": {
-    "generated": "./generated"
+    "generated": "link:generated"
   }
 }
