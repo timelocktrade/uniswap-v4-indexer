@@ -171,7 +171,7 @@ type Swap
 type PoolDayData {
   id: ID! # chainId-<poolId>-<timestamp rounded to current day by dividing by 86400>
   chainId: BigInt!
-  startTimestamp: BigInt! @index
+  startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
   sqrtPriceX96: BigInt!
@@ -192,7 +192,7 @@ type PoolDayData {
 type Pool5MinuteData {
   id: ID! # chainId-<poolId>-<timestamp rounded to nearest 5 minutes>
   chainId: BigInt!
-  startTimestamp: BigInt! @index
+  startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
   sqrtPriceX96: BigInt!
@@ -213,7 +213,7 @@ type Pool5MinuteData {
 type PoolHourData {
   id: ID! # chainId-<poolId>-<timestamp rounded to current hour>
   chainId: BigInt!
-  startTimestamp: BigInt! @index
+  startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
   sqrtPriceX96: BigInt!
@@ -234,7 +234,7 @@ type PoolHourData {
 type TokenDayData {
   id: ID! # chainId-token address-date
   chainId: BigInt!
-  startTimestamp: BigInt! @index
+  startTimestamp: Int! @index
   token: Token! @index
   volume: BigInt!
   txCount: BigInt!
@@ -245,7 +245,7 @@ type TokenDayData {
 type TokenHourData {
   id: ID! # chainId-token address-timestamp
   chainId: BigInt!
-  startTimestamp: BigInt! @index
+  startTimestamp: Int! @index
   token: Token! @index
   volume: BigInt!
   txCount: BigInt!
