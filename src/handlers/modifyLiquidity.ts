@@ -14,19 +14,17 @@ const getOrCreateLiquidityProvider = async (
   event: PoolManager_ModifyLiquidity_event,
   context: handlerContext,
 ): Promise<LiquidityProvider> => {
-  const chainId = event.chainId;
   const address = event.params.sender;
   const timestamp = BigInt(event.block.timestamp);
   const blockNumber = BigInt(event.block.number);
 
-  const lpId = `${chainId}_${poolId}-${address.toLowerCase()}`;
+  const lpId = `${poolId}-${address.toLowerCase()}`;
   const lpRO = await context.LiquidityProvider.get(lpId);
 
   if (lpRO) return {...lpRO};
 
   const newLP: LiquidityProvider = {
     id: lpId,
-    chainId: BigInt(chainId),
     address: address.toLowerCase(),
     deposited0: 0n,
     deposited1: 0n,
@@ -45,9 +43,7 @@ const getOrCreateLiquidityProvider = async (
 
 PoolManager.ModifyLiquidity.handler(
   async ({event, context}) => {
-    console.log("modify liquidity");
-
-    const poolId = `${event.chainId}_${event.params.id}`;
+    const poolId = event.params.id;
     const poolRO = await context.Pool.get(poolId);
     if (!poolRO) return;
 
@@ -119,7 +115,6 @@ PoolManager.ModifyLiquidity.handler(
 
     const modifyLiquidity = {
       id: `${transaction.id}-${event.logIndex}`,
-      chainId: BigInt(event.chainId),
       transaction_id: transaction.id,
       timestamp: BigInt(timestamp),
       pool_id: pool.id,
@@ -148,7 +143,6 @@ PoolManager.ModifyLiquidity.handler(
           lowerTickIdx,
           pool.id,
           pool.poolId,
-          pool.chainId,
           BigInt(timestamp),
           BigInt(event.block.number),
         );
@@ -160,7 +154,6 @@ PoolManager.ModifyLiquidity.handler(
           upperTickIdx,
           pool.id,
           pool.poolId,
-          pool.chainId,
           BigInt(timestamp),
           BigInt(event.block.number),
         );
@@ -213,7 +206,6 @@ PoolManager.ModifyLiquidity.handler(
           BigInt(timestamp),
           BigInt(event.block.number),
           liquidityProvider.id,
-          pool.chainId,
         );
 
     // Calculate accrued fees if position already exists
@@ -342,12 +334,10 @@ const createTick = (
   tickIdx: bigint,
   poolId: string,
   poolIdString: string,
-  chainId: bigint,
   timestamp: bigint,
   blockNumber: bigint,
 ) => ({
   id: tickId,
-  chainId: chainId,
   poolId: poolIdString,
   tickIdx: tickIdx,
   pool_id: poolId,
@@ -374,10 +364,8 @@ const createPosition = (
   timestamp: bigint,
   blockNumber: bigint,
   liquidityProviderId: string,
-  chainId: bigint,
 ) => ({
   id: positionId,
-  chainId: chainId,
   owner: owner.toLowerCase(),
   liquidityProvider_id: liquidityProviderId,
   pool_id: poolId,

@@ -6,7 +6,7 @@ import {ALLOWED_POOL_IDS} from '../utils/allowedPools';
 
 PoolManager.Donate.handler(
   async ({event, context}) => {
-    const poolId = `${event.chainId}_${event.params.id}`;
+    const poolId = event.params.id;
     const poolRO = await context.Pool.get(poolId);
     if (!poolRO) return;
 
@@ -51,7 +51,7 @@ PoolManager.Donate.handler(
     token1.txCount = token1.txCount + 1n;
 
     if (pool.hooks !== zeroAddress) {
-      const hookStatsId = `${event.chainId}_${pool.hooks}`;
+      const hookStatsId = pool.hooks;
       const hookStatsRO = await context.HookStats.get(hookStatsId);
 
       if (hookStatsRO) {

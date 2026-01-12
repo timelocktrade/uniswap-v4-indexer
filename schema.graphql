@@ -1,6 +1,5 @@
 type Token {
-  id: ID! # chainId-token address
-  chainId: BigInt!
+  id: ID! # token address
   symbol: String!
   name: String!
   decimals: BigInt!
@@ -19,8 +18,7 @@ type Token {
 }
 
 type Pool {
-  id: ID! # chainId-poolId
-  chainId: BigInt!
+  id: ID! # poolId
   poolId: String!
   name: String!
   createdAtTimestamp: BigInt! @index
@@ -59,8 +57,7 @@ type Pool {
 }
 
 type Tick {
-  id: ID! # chainId-<poolId>#<tick index>
-  chainId: BigInt!
+  id: ID! # <poolId>#<tick index>
   poolId: String @index
   tickIdx: BigInt! @index
   pool: Pool! @index
@@ -75,9 +72,21 @@ type Tick {
   createdAtBlockNumber: BigInt! @index
 }
 
+type PoolUser {
+  id: ID! # <poolId>-<user address>
+  pool: Pool! @index
+  user: String! @index
+  volume0: BigInt!
+  volume1: BigInt!
+  fees0: BigInt!
+  fees1: BigInt!
+  swapCount: BigInt!
+  createdAtTimestamp: BigInt! @index
+  createdAtBlockNumber: BigInt! @index
+}
+
 type LiquidityProvider {
-  id: ID! # chainId-<poolId>-<liquidity provider address>
-  chainId: BigInt!
+  id: ID! # <poolId>-<liquidity provider address>
   address: String! @index
   deposited0: BigInt!
   deposited1: BigInt!
@@ -93,8 +102,7 @@ type LiquidityProvider {
 }
 
 type Position {
-  id: ID! # chainId-<poolId>#<owner>#<tickLower>#<tickUpper>
-  chainId: BigInt!
+  id: ID! # <poolId>#<owner>#<tickLower>#<tickUpper>
   owner: String! @index
   liquidityProvider: LiquidityProvider! @index
   pool: Pool! @index
@@ -118,8 +126,7 @@ type Position {
 }
 
 type Transaction {
-  id: ID! # chainId-txn hash
-  chainId: BigInt!
+  id: ID! # txn hash
   blockNumber: BigInt! @index
   timestamp: BigInt! @index
   gasUsed: BigInt!
@@ -131,8 +138,7 @@ type Transaction {
 type ModifyLiquidity
   @index(fields: ["timestamp", "pool"])
   @index(fields: ["amount", "pool"]) {
-  id: ID! # chainId-transaction hash + "#" + index in modifyLiquidity array
-  chainId: BigInt!
+  id: ID! # transaction hash + "#" + index in modifyLiquidity array
   transaction: Transaction!
   timestamp: BigInt! @index
   pool: Pool! @index
@@ -151,8 +157,7 @@ type ModifyLiquidity
 type Swap
   @index(fields: ["timestamp", "pool"])
   @index(fields: ["amount0", "pool"]) {
-  id: ID! # chainId-transaction hash + "#" + index in swaps array
-  chainId: BigInt!
+  id: ID! # transaction hash + "#" + index in swaps array
   transaction: Transaction!
   timestamp: BigInt! @index
   pool: Pool! @index
@@ -169,8 +174,7 @@ type Swap
 }
 
 type PoolDayData {
-  id: ID! # chainId-<poolId>-<timestamp rounded to current day by dividing by 86400>
-  chainId: BigInt!
+  id: ID! # <poolId>-<timestamp rounded to current day by dividing by 86400>
   startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
@@ -190,8 +194,7 @@ type PoolDayData {
 }
 
 type Pool5MinuteData {
-  id: ID! # chainId-<poolId>-<timestamp rounded to nearest 5 minutes>
-  chainId: BigInt!
+  id: ID! # <poolId>-<timestamp rounded to nearest 5 minutes>
   startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
@@ -211,8 +214,7 @@ type Pool5MinuteData {
 }
 
 type PoolHourData {
-  id: ID! # chainId-<poolId>-<timestamp rounded to current hour>
-  chainId: BigInt!
+  id: ID! # <poolId>-<timestamp rounded to current hour>
   startTimestamp: Int! @index
   pool: Pool! @index
   liquidity: BigInt!
@@ -232,8 +234,7 @@ type PoolHourData {
 }
 
 type TokenDayData {
-  id: ID! # chainId-token address-date
-  chainId: BigInt!
+  id: ID! # token address-date
   startTimestamp: Int! @index
   token: Token! @index
   volume: BigInt!
@@ -243,8 +244,7 @@ type TokenDayData {
 }
 
 type TokenHourData {
-  id: ID! # chainId-token address-timestamp
-  chainId: BigInt!
+  id: ID! # token address-timestamp
   startTimestamp: Int! @index
   token: Token! @index
   volume: BigInt!
@@ -254,8 +254,7 @@ type TokenHourData {
 }
 
 type HookStats {
-  id: ID! # chainId-hook address
-  chainId: BigInt!
+  id: ID! # hook address
   poolCount: BigInt!
   swapCount: BigInt!
   firstPoolCreatedAt: BigInt!

@@ -1,5 +1,5 @@
 import {zeroAddress} from 'viem';
-import {handlerContext, PoolManager, Swap} from 'generated';
+import {handlerContext, PoolManager, Swap, PoolUser} from 'generated';
 import * as intervalUpdates from '../utils/intervalUpdates';
 import {getOrCreateTransaction} from '../utils/transaction';
 import {ALLOWED_POOL_IDS} from '../utils/allowedPools';
@@ -123,9 +123,38 @@ const updateTickCrossed = async (
   }
 };
 
+// Helper function to get or create PoolUser entity
+const getOrCreatePoolUser = async (
+  poolId: string,
+  userAddress: string,
+  timestamp: bigint,
+  blockNumber: bigint,
+  context: handlerContext,
+): Promise<PoolUser> => {
+  const poolUserId = `${poolId}-${userAddress}`;
+  let poolUser = await context.PoolUser.get(poolUserId);
+
+  if (!poolUser) {
+    poolUser = {
+      id: poolUserId,
+      pool_id: poolId,
+      user: userAddress,
+      volume0: 0n,
+      volume1: 0n,
+      fees0: 0n,
+      fees1: 0n,
+      swapCount: 0n,
+      createdAtTimestamp: timestamp,
+      createdAtBlockNumber: blockNumber,
+    };
+  }
+
+  return poolUser;
+};
+
 PoolManager.Swap.handler(
   async ({event, context}) => {
-    const poolId = `${event.chainId}_${event.params.id}`;
+    const poolId = event.params.id;
     const poolRO = await context.Pool.get(poolId);
     if (!poolRO) return;
 
@@ -224,7 +253,7 @@ PoolManager.Swap.handler(
 
     if (pool.hooks !== zeroAddress) {
       // Update HookStats
-      const hookStatsId = `${event.chainId}_${pool.hooks}`;
+      const hookStatsId = pool.hooks;
       const hookStatsRO = await context.HookStats.get(hookStatsId);
       if (hookStatsRO) {
         const hookStats = {...hookStatsRO};
@@ -242,8 +271,7 @@ PoolManager.Swap.handler(
     const transaction = await getOrCreateTransaction(event, context);
 
     const swap: Swap = {
-      id: `${event.chainId}_${event.transaction.hash}_${event.logIndex}`,
-      chainId: BigInt(event.chainId),
+      id: `${event.transaction.hash}-${event.logIndex}`,
       transaction_id: transaction.id,
       timestamp: BigInt(timestamp),
       pool_id: pool.id,
@@ -257,6 +285,26 @@ PoolManager.Swap.handler(
       tick: event.params.tick,
       sqrtPriceX96: event.params.sqrtPriceX96,
       logIndex: BigInt(event.logIndex),
+    };
+
+    // Get or create PoolUser entity
+    const userAddress = event.transaction.from?.toLowerCase() || '';
+    let poolUser = await getOrCreatePoolUser(
+      poolId,
+      userAddress,
+      BigInt(timestamp),
+      BigInt(event.block.number),
+      context,
+    );
+
+    // Update PoolUser metrics
+    poolUser = {
+      ...poolUser,
+      volume0: poolUser.volume0 + amount0Abs,
+      volume1: poolUser.volume1 + amount1Abs,
+      fees0: poolUser.fees0 + fees0,
+      fees1: poolUser.fees1 + fees1,
+      swapCount: poolUser.swapCount + 1n,
     };
 
     // interval data
@@ -308,6 +356,7 @@ PoolManager.Swap.handler(
     token1HourData.swapCount = token1HourData.swapCount + 1n;
 
     context.Swap.set(swap);
+    context.PoolUser.set(poolUser);
     context.TokenDayData.set(token0DayData);
     context.TokenDayData.set(token1DayData);
     context.PoolDayData.set(poolDayData);

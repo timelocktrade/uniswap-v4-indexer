@@ -14,7 +14,6 @@ export const updatePoolDayData = async (
     ? {...poolDayDataRO}
     : {
         id: dayPoolId,
-        chainId: pool.chainId,
         startTimestamp: dayStartTimestamp,
         pool_id: pool.id,
         volume0: 0n,
@@ -67,7 +66,6 @@ export const updatePool5MinuteData = async (
     ? {...pool5MinuteDataRO}
     : {
         id: fiveMinutePoolId,
-        chainId: pool.chainId,
         startTimestamp: fiveMinuteStartUnix,
         pool_id: pool.id,
         volume0: 0n,
@@ -120,7 +118,6 @@ export const updatePoolHourData = async (
     ? {...poolHourDataRO}
     : {
         id: hourPoolId,
-        chainId: pool.chainId,
         startTimestamp: hourStartUnix,
         pool_id: pool.id,
         volume0: 0n,
@@ -173,7 +170,6 @@ export const updateTokenDayData = async (
     ? {...tokenDayDataRO}
     : {
         id: tokenDayId,
-        chainId: token.chainId,
         startTimestamp: dayStartTimestamp,
         token_id: token.id,
         volume: 0n,
@@ -201,7 +197,6 @@ export const updateTokenHourData = async (
     ? {...tokenHourDataRO}
     : {
         id: tokenHourID,
-        chainId: token.chainId,
         startTimestamp: hourStartTimestamp,
         token_id: token.id,
         volume: 0n,

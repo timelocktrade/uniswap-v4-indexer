@@ -16,15 +16,13 @@ export const getOrCreateTransaction = async (
   const blockNumber = BigInt(event.block.number);
   const timestamp = BigInt(event.block.timestamp);
   const gasPrice = 0n; // gasPrice not available in event.transaction
-  const chainId = event.chainId;
 
-  const txId = `${chainId}_${txHash}`;
+  const txId = txHash;
   const txRO = await context.Transaction.get(txId);
   const transaction = txRO
     ? {...txRO}
     : {
         id: txId,
-        chainId: BigInt(chainId),
         blockNumber: 0n,
         timestamp: 0n,
         gasUsed: 0n,

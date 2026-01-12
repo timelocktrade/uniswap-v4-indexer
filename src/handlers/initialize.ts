@@ -23,7 +23,6 @@ export const getOrCreateToken = async (
     });
     token = {
       id: tokenId,
-      chainId: BigInt(chainId),
       symbol: metadata.symbol,
       name: metadata.name,
       decimals: BigInt(metadata.decimals),
@@ -46,12 +45,12 @@ export const getOrCreateToken = async (
 
 PoolManager.Initialize.handler(
   async ({event, context}) => {
-    const poolId = `${event.chainId}_${event.params.id}`;
+    const poolId = event.params.id;
 
     console.log(`Creating new pool: ${poolId}`);
 
-    const token0Id = `${event.chainId}_${event.params.currency0.toLowerCase()}`;
-    const token1Id = `${event.chainId}_${event.params.currency1.toLowerCase()}`;
+    const token0Id = event.params.currency0.toLowerCase();
+    const token1Id = event.params.currency1.toLowerCase();
 
     // Get or create tokens
     const token0 = await getOrCreateToken(
@@ -75,13 +74,12 @@ PoolManager.Initialize.handler(
 
     if (event.params.hooks !== zeroAddress) {
       // Create or update HookStats
-      const hookStatsId = `${event.chainId}_${event.params.hooks}`;
+      const hookStatsId = event.params.hooks;
       let hookStats = await context.HookStats.get(hookStatsId);
 
       if (!hookStats) {
         hookStats = {
           id: hookStatsId,
-          chainId: BigInt(event.chainId),
           poolCount: 0n,
           swapCount: 0n,
           firstPoolCreatedAt: BigInt(event.block.timestamp),
@@ -103,7 +101,6 @@ PoolManager.Initialize.handler(
     // Create the pool entity
     const pool = {
       id: poolId,
-      chainId: BigInt(event.chainId),
       poolId: event.params.id,
       name: `${token0.symbol}/${token1.symbol}`,
       createdAtTimestamp: BigInt(event.block.timestamp),

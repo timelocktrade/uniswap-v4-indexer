@@ -21,12 +21,12 @@
 
 //     // Getting the actual entity from the mock database
 //     let actualPositionManagerApproval = mockDbUpdated.entities.PositionManager_Approval.get(
-//       `${event.chainId}_${event.block.number}_${event.logIndex}`
+//       `${event.chainId}-${event.block.number}-${event.logIndex}`
 //     );
 
 //     // Creating the expected entity
 //     const expectedPositionManagerApproval: PositionManager_Approval = {
-//       id: `${event.chainId}_${event.block.number}_${event.logIndex}`,
+//       id: `${event.chainId}-${event.block.number}-${event.logIndex}`,
 //       owner: event.params.owner,
 //       spender: event.params.spender,
 //       id: event.params.id,
