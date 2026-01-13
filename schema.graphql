@@ -75,7 +75,7 @@ type Tick {
 type PoolUser {
   id: ID! # <poolId>-<user address>
   pool: Pool! @index
-  user: String! @index
+  address: String! @index
   volume0: BigInt!
   volume1: BigInt!
   fees0: BigInt!

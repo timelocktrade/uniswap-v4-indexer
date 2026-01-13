@@ -138,7 +138,7 @@ const getOrCreatePoolUser = async (
     poolUser = {
       id: poolUserId,
       pool_id: poolId,
-      user: userAddress,
+      address: userAddress,
       volume0: 0n,
       volume1: 0n,
       fees0: 0n,
@@ -148,7 +148,6 @@ const getOrCreatePoolUser = async (
       createdAtBlockNumber: blockNumber,
     };
   }
-
   return poolUser;
 };
 
