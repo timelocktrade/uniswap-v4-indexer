@@ -19,18 +19,18 @@
     "@types/mocha": "10.0.10",
     "@types/node": "25.0.8",
     "chai": "6.2.2",
-    "dotenv": "17.2.3",
     "gts": "^7.0.0",
     "mocha": "11.7.5",
     "ts-mocha": "^11.1.0",
-    "typescript": "5.9.3",
-    "viem": "2.44.2"
+    "typescript": "5.9.3"
   },
   "dependencies": {
     "@uniswap/sdk-core": "^7.10.1",
     "@uniswap/v3-sdk": "^3.27.0",
     "envio": "2.32.3",
-    "jsbi": "4.3.2"
+    "jsbi": "4.3.2",
+    "viem": "2.44.2",
+    "dotenv": "17.2.3"
   },
   "optionalDependencies": {
     "generated": "link:generated"

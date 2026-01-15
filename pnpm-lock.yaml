@@ -14,12 +14,18 @@ importers:
       '@uniswap/v3-sdk':
         specifier: ^3.27.0
         version: 3.27.0(hardhat@2.27.1(ts-node@10.9.1(@types/node@25.0.8)(typescript@5.9.3))(typescript@5.9.3))
+      dotenv:
+        specifier: 17.2.3
+        version: 17.2.3
       envio:
         specifier: 2.32.3
         version: 2.32.3(typescript@5.9.3)
       jsbi:
         specifier: 4.3.2
         version: 4.3.2
+      viem:
+        specifier: 2.44.2
+        version: 2.44.2(typescript@5.9.3)
     devDependencies:
       '@types/chai':
         specifier: ^5.2.3
@@ -33,9 +39,6 @@ importers:
       chai:
         specifier: 6.2.2
         version: 6.2.2
-      dotenv:
-        specifier: 17.2.3
-        version: 17.2.3
       gts:
         specifier: ^7.0.0
         version: 7.0.0(typescript@5.9.3)
@@ -48,9 +51,6 @@ importers:
       typescript:
         specifier: 5.9.3
         version: 5.9.3
-      viem:
-        specifier: 2.44.2
-        version: 2.44.2(typescript@5.9.3)
     optionalDependencies:
       generated:
         specifier: link:generated
