@@ -179,8 +179,10 @@ PoolManager.Swap.handler(
     const amount0Abs = abs(amount0);
     const amount1Abs = abs(amount1);
 
-    const fees0 = calculateFees(amount0Abs, pool.feeTier);
-    const fees1 = calculateFees(amount1Abs, pool.feeTier);
+    // Fees are only charged on the input token
+    // Positive amount means tokens going into the pool (input)
+    const fees0 = amount0 > 0n ? calculateFees(amount0Abs, pool.feeTier) : 0n;
+    const fees1 = amount1 > 0n ? calculateFees(amount1Abs, pool.feeTier) : 0n;
 
     // Update global fee growth using liquidity BEFORE the swap
     pool.feeGrowthGlobal0X128 = updateFeeGrowth(
@@ -307,6 +309,8 @@ PoolManager.Swap.handler(
     };
 
     // interval data
+    // Use poolRO.sqrtPriceX96 as the open price (price before this swap)
+    const openPrice = poolRO.sqrtPriceX96;
     const [
       poolDayData,
       poolHourData,
@@ -316,9 +320,14 @@ PoolManager.Swap.handler(
       token0HourData,
       token1HourData,
     ] = await Promise.all([
-      intervalUpdates.updatePoolDayData(timestamp, pool, context),
-      intervalUpdates.updatePoolHourData(timestamp, pool, context),
-      intervalUpdates.updatePool5MinuteData(timestamp, pool, context),
+      intervalUpdates.updatePoolDayData(timestamp, pool, openPrice, context),
+      intervalUpdates.updatePoolHourData(timestamp, pool, openPrice, context),
+      intervalUpdates.updatePool5MinuteData(
+        timestamp,
+        pool,
+        openPrice,
+        context,
+      ),
       intervalUpdates.updateTokenDayData(timestamp, token0, context),
       intervalUpdates.updateTokenDayData(timestamp, token1, context),
       intervalUpdates.updateTokenHourData(timestamp, token0, context),

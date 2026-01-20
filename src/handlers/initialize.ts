@@ -133,9 +133,16 @@ PoolManager.Initialize.handler(
     context.Pool.set(pool);
 
     // Initialize interval data
-    await updatePoolDayData(event.block.timestamp, pool, context);
-    await updatePoolHourData(event.block.timestamp, pool, context);
-    await updatePool5MinuteData(event.block.timestamp, pool, context);
+    // For initialization, the open price is the initial sqrtPriceX96
+    const openPrice = pool.sqrtPriceX96;
+    await updatePoolDayData(event.block.timestamp, pool, openPrice, context);
+    await updatePoolHourData(event.block.timestamp, pool, openPrice, context);
+    await updatePool5MinuteData(
+      event.block.timestamp,
+      pool,
+      openPrice,
+      context,
+    );
 
     console.log(
       `Initialized pool: ${token0.symbol}/${token1.symbol} at sqrtPrice ${pool.sqrtPriceX96} (tick ${pool.tick})`,

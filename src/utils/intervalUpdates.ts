@@ -3,6 +3,7 @@ import type {handlerContext, Pool, Token} from 'generated';
 export const updatePoolDayData = async (
   timestamp: number,
   pool: Pool,
+  openPrice: bigint,
   context: handlerContext,
 ) => {
   const dayId = Math.floor(timestamp / 86400);
@@ -25,10 +26,10 @@ export const updatePoolDayData = async (
         txCount: 0n,
         swapCount: 0n,
         modifyLiquidityCount: 0n,
-        open_: pool.sqrtPriceX96,
-        high: pool.sqrtPriceX96,
-        low: pool.sqrtPriceX96,
-        close: pool.sqrtPriceX96,
+        open_: openPrice,
+        high: openPrice,
+        low: openPrice,
+        close: openPrice,
         liquidity: pool.liquidity,
         sqrtPriceX96: pool.sqrtPriceX96,
         tick: pool.tick ?? 0n,
@@ -55,6 +56,7 @@ export const updatePoolDayData = async (
 export const updatePool5MinuteData = async (
   timestamp: number,
   pool: Pool,
+  openPrice: bigint,
   context: handlerContext,
 ) => {
   const fiveMinuteIndex = Math.floor(timestamp / 300);
@@ -77,12 +79,12 @@ export const updatePool5MinuteData = async (
         txCount: 0n,
         swapCount: 0n,
         modifyLiquidityCount: 0n,
-        open_: pool.sqrtPriceX96,
-        high: pool.sqrtPriceX96,
-        low: pool.sqrtPriceX96,
-        close: pool.sqrtPriceX96,
-        liquidity: 0n,
-        sqrtPriceX96: 0n,
+        open_: openPrice,
+        high: openPrice,
+        low: openPrice,
+        close: openPrice,
+        liquidity: pool.liquidity,
+        sqrtPriceX96: pool.sqrtPriceX96,
         tick: pool.tick ?? 0n,
       };
 
@@ -107,6 +109,7 @@ export const updatePool5MinuteData = async (
 export const updatePoolHourData = async (
   timestamp: number,
   pool: Pool,
+  openPrice: bigint,
   context: handlerContext,
 ) => {
   const hourIndex = Math.floor(timestamp / 3600);
@@ -129,12 +132,12 @@ export const updatePoolHourData = async (
         txCount: 0n,
         swapCount: 0n,
         modifyLiquidityCount: 0n,
-        open_: pool.sqrtPriceX96,
-        high: pool.sqrtPriceX96,
-        low: pool.sqrtPriceX96,
-        close: pool.sqrtPriceX96,
-        liquidity: 0n,
-        sqrtPriceX96: 0n,
+        open_: openPrice,
+        high: openPrice,
+        low: openPrice,
+        close: openPrice,
+        liquidity: pool.liquidity,
+        sqrtPriceX96: pool.sqrtPriceX96,
         tick: pool.tick ?? 0n,
       };
 

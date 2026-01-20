@@ -68,6 +68,8 @@ PoolManager.Donate.handler(
     await getOrCreateTransaction(event, context);
 
     // Update interval data
+    // Use poolRO.sqrtPriceX96 as the open price (price before this event)
+    const openPrice = poolRO.sqrtPriceX96;
     const [
       poolDayData,
       poolHourData,
@@ -77,9 +79,14 @@ PoolManager.Donate.handler(
       token0HourData,
       token1HourData,
     ] = await Promise.all([
-      intervalUpdates.updatePoolDayData(timestamp, pool, context),
-      intervalUpdates.updatePoolHourData(timestamp, pool, context),
-      intervalUpdates.updatePool5MinuteData(timestamp, pool, context),
+      intervalUpdates.updatePoolDayData(timestamp, pool, openPrice, context),
+      intervalUpdates.updatePoolHourData(timestamp, pool, openPrice, context),
+      intervalUpdates.updatePool5MinuteData(
+        timestamp,
+        pool,
+        openPrice,
+        context,
+      ),
       intervalUpdates.updateTokenDayData(timestamp, token0, context),
       intervalUpdates.updateTokenDayData(timestamp, token1, context),
       intervalUpdates.updateTokenHourData(timestamp, token0, context),
