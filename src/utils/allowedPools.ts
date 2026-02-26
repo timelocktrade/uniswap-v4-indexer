@@ -1,3 +1,4 @@
 export const ALLOWED_POOL_IDS = [
   '0x55bffbb08cd09fb5dc39b2432c12f3249ec70370f09c7e557367d5019fcbda9f',
+  '0x2e88d74ff17e642ae62fc4f397c3a7dacddfaa19759bcc93ae566481f10c4097'
 ];
